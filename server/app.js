@@ -9,7 +9,7 @@ var server = http.createServer(app);
 var con;
 
 var zipcodeRegex = new RegExp(/^\d{5}$/);
-var messageRegex = new RegExp(/^[\w]*$/);
+var messageRegex = new RegExp(/^[\w ]{1,64}$/);
 
 app.use(bodyParser());
 
@@ -71,30 +71,38 @@ app.get('/get/:zipcode', function (req, res) {
  * /put/zipcode/string
  */
 app.get('/put/:zipcode/:str', function (req, res) {
+    var result = {
+        success: true,
+        errMessage: ""
+    };
+
     var zipcode = req.params.zipcode;
     var str = req.params.str;
 
     var r = zipcodeRegex.test(zipcode);
     if (!r) {
-        console.log("Zipcode was incorrect");
-        return;
+        var msg = "Zipcode was incorrect";
+        result.success = false;
+        result.errMessage = msg;
+        console.log(msg);
     }
 
     r = messageRegex.test(str);
-    if (!r) {
-        console.log("Message was incorrect");
-        return;
+    if (!r && result.success) {
+        var msg = "Message was incorrect";
+        result.success = false;
+        result.errMessage = msg;
+        console.log(msg);
     }
 
-    var result = {
-        success: true
-    };
+    if (result.success) {
+        var query = "INSERT INTO `amir_project`(`message`,`zipcode`) VALUES (?,?);";
+        con.query(query, [str, zipcode], function (err, row, fields) {
+            if (err) throw err;
+            result.success = true;
+        });
+    }
 
-    var query = "INSERT INTO `amir_project`(`message`,`zipcode`) VALUES (?,?);";
-    con.query(query, [str, zipcode], function (err, row, fields) {
-        if (err) throw err;
-        result.success = true;
-    });
     sendResults(result, req, res);
 });
 
