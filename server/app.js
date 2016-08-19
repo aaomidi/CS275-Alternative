@@ -103,7 +103,7 @@ function sendResults(result, request, response) {
     response.jsonp(result);
 }
 
-server.listen(1234);
+server.listen(4754);
 
 if (require.main === module) {
     connectToSQL();
