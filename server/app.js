@@ -8,7 +8,8 @@ var app = express();
 var server = http.createServer(app);
 var con;
 
-var zipcodeRegex = new RegExp("/^\d{5}$/");
+var zipcodeRegex = new RegExp(/^\d{5}$/);
+var messageRegex = new RegExp(/^[\w]*$/);
 
 app.use(bodyParser());
 
@@ -47,7 +48,7 @@ app.get('/get/:zipcode', function (req, res) {
         return;
     }
 
-    var query = "SELECT * FROM `cs275_project` ORDER BY RAND() LIMIT 9;";
+    var query = "SELECT * FROM `amir_project` ORDER BY RAND() LIMIT 9;";
     con.query(query, function (err, rows, fields) {
         if (err) throw err;
 
@@ -72,10 +73,16 @@ app.get('/get/:zipcode', function (req, res) {
 app.get('/put/:zipcode/:str', function (req, res) {
     var zipcode = req.params.zipcode;
     var str = req.params.str;
-    var result = zipcodeRegex.test(zipcode);
 
-    if (!result) {
+    var r = zipcodeRegex.test(zipcode);
+    if (!r) {
         console.log("Zipcode was incorrect");
+        return;
+    }
+
+    r = messageRegex.test(str);
+    if (!r) {
+        console.log("Message was incorrect");
         return;
     }
 
