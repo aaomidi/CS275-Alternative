@@ -87,7 +87,7 @@ app.get('/put/:zipcode/:str', function (req, res) {
     }
 
     var result = {
-        success: false
+        success: true
     };
 
     var query = "INSERT INTO `amir_project`(`message`,`zipcode`) VALUES (?,?);";
