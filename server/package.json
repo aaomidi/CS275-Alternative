@@ -1,0 +1,9 @@
+{
+  "name": "CS275-Project",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "mysql": "*"
+  }
+}
