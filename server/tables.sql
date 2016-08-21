@@ -1,6 +1,7 @@
 CREATE TABLE `amir_cs275`.`amir_project` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `message` VARCHAR(64) UNIQUE,
+  `poster`  VARCHAR(16)           DEFAULT NULL,
+  `message` VARCHAR(140) UNIQUE,
   `zipcode` CHAR(5)      NOT NULL DEFAULT 10000,
   `ts`      TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

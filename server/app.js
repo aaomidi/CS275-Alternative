@@ -11,7 +11,9 @@ var con;
 var zipcodeRegex = new RegExp(/^\d{5}$/);
 var messageRegex = new RegExp(/^[\w ]{1,64}$/);
 
-app.use(bodyParser());
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.multipart());
 
 var connectToSQL = function () {
     var obj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
@@ -67,6 +69,43 @@ app.get('/get/:zipcode', function (req, res) {
     });
 });
 
+app.post('/api', function (req, res) {
+    var type = req.body.type;
+    switch (type.toLowerCase()) {
+        case "get": {
+            var count = parseInt(req.body.count, 10);
+            if (count <= 0 || count >= 9) {
+                count = 8;
+            }
+            console.log(count);
+            var zipcode = req.body.zipcode;
+            var result = zipcodeRegex.test(zipcode);
+
+            if (!result) {
+                console.log("Zipcode was incorrect");
+                return;
+            }
+
+            var query = "SELECT * FROM `amir_project` ORDER BY RAND() LIMIT 9;";
+            con.query(query, function (err, rows, fields) {
+                if (err) throw err;
+
+                var result = {
+                    messages: []
+                };
+
+                for (var i in rows) {
+                    if (!rows.hasOwnProperty(i)) {
+                        console.log("Broke!!");
+                        break;
+                    }
+                    result.messages.push(rows[i].message);
+                }
+                sendResults(result, req, res);
+            });
+        }
+    }
+});
 /**
  * /put/zipcode/string
  */

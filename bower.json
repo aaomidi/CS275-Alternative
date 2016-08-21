@@ -1,0 +1,22 @@
+{
+  "name": "cs275-alternative",
+  "authors": [
+    "Amir Omidi <amir@aaomidi.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^3.1.0"
+  }
+}
