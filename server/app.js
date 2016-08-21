@@ -9,7 +9,7 @@ var server = http.createServer(app);
 var con;
 
 var zipcodeRegex = new RegExp(/^\d{5}$/);
-var messageRegex = new RegExp(/^[\w ]{1,64}$/);
+var messageRegex = new RegExp(/^[\w ]{1,140}$/);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -39,40 +39,10 @@ var connectToSQL = function () {
     });
 };
 
-/**
- * /get/zipcode
- */
-app.get('/get/:zipcode', function (req, res) {
-    var zipcode = req.params.zipcode;
-    var result = zipcodeRegex.test(zipcode);
 
-    if (!result) {
-        console.log("Zipcode was incorrect");
-        return;
-    }
-
-    var query = "SELECT * FROM `amir_project` ORDER BY RAND() LIMIT 9;";
-    con.query(query, function (err, rows, fields) {
-        if (err) throw err;
-
-        var result = {
-            messages: []
-        };
-
-        for (var i in rows) {
-            if (!rows.hasOwnProperty(i)) {
-                console.log("Broke!!");
-                break;
-            }
-            result.messages.push(rows[i].message);
-        }
-        sendResults(result, req, res);
-    });
-});
-
-app.post('/api', function (req, res) {
+app.post('/api/get', function (req, res) {
     console.log(req.body);
-    var type = req.body.t;
+    var type = req.body.type;
     if (type == null) {
         console.log("Error :(");
         return;
@@ -80,8 +50,8 @@ app.post('/api', function (req, res) {
     switch (type.toLowerCase()) {
         case "get": {
             var count = parseInt(req.body.count, 10);
-            if (count <= 0 || count >= 9) {
-                count = 8;
+            if (count <= 0 || count > 24) {
+                count = 12;
             }
             console.log(count);
             var zipcode = req.body.zipcode;
@@ -109,46 +79,55 @@ app.post('/api', function (req, res) {
                 }
                 sendResults(result, req, res);
             });
+            break;
         }
     }
 });
-/**
- * /put/zipcode/string
- */
-app.get('/put/:zipcode/:str', function (req, res) {
-    var result = {
-        success: true,
-        errMessage: ""
-    };
-
-    var zipcode = req.params.zipcode;
-    var str = req.params.str;
-
-    var r = zipcodeRegex.test(zipcode);
-    if (!r) {
-        var msg = "Zipcode was incorrect";
-        result.success = false;
-        result.errMessage = msg;
-        console.log(msg);
+app.post('/api/put', function (req, res) {
+    console.log(req.body);
+    var type = req.body.type;
+    if (type == null) {
+        console.log("Error :(");
+        return;
     }
+    switch (type.toLowerCase()) {
+        case "put": {
+            var result = {
+                success: true,
+                errMessage: ""
+            };
 
-    r = messageRegex.test(str);
-    if (!r && result.success) {
-        var msg = "Message was incorrect";
-        result.success = false;
-        result.errMessage = msg;
-        console.log(msg);
+            var zipcode = req.params.zipcode;
+            var str = req.params.message;
+
+            var r = zipcodeRegex.test(zipcode);
+            if (!r) {
+                var msg = "Zipcode was incorrect";
+                result.success = false;
+                result.errMessage = msg;
+                console.log(msg);
+            }
+
+            r = messageRegex.test(str);
+            if (!r && result.success) {
+                var msg = "Message was incorrect";
+                result.success = false;
+                result.errMessage = msg;
+                console.log(msg);
+            }
+
+            if (result.success) {
+                var query = "INSERT INTO `amir_project`(`message`,`zipcode`) VALUES (?,?);";
+                con.query(query, [str, zipcode], function (err, row, fields) {
+                    if (err) throw err;
+                    result.success = true;
+                });
+            }
+
+            sendResults(result, req, res);
+            break;
+        }
     }
-
-    if (result.success) {
-        var query = "INSERT INTO `amir_project`(`message`,`zipcode`) VALUES (?,?);";
-        con.query(query, [str, zipcode], function (err, row, fields) {
-            if (err) throw err;
-            result.success = true;
-        });
-    }
-
-    sendResults(result, req, res);
 });
 
 function sendResults(result, request, response) {
