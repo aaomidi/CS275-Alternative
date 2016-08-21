@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var jsonParser = require('express-json');
 var http = require('http');
 var fs = require('fs');
 var mysql = require('mysql');
