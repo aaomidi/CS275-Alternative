@@ -11,7 +11,10 @@ var con;
 var zipcodeRegex = new RegExp(/^\d{5}$/);
 var messageRegex = new RegExp(/^[\w ]{1,64}$/);
 
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 var connectToSQL = function () {
     var obj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
