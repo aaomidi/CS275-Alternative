@@ -71,6 +71,7 @@ app.get('/get/:zipcode', function (req, res) {
 });
 
 app.post('/api', function (req, res) {
+    console.log(req.body);
     var type = req.body.t;
     if (type == null) {
         console.log("Error :(");
