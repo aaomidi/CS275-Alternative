@@ -1,6 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var jsonParser = require('express-json');
 var http = require('http');
 var fs = require('fs');
 var mysql = require('mysql');
@@ -12,8 +11,7 @@ var con;
 var zipcodeRegex = new RegExp(/^\d{5}$/);
 var messageRegex = new RegExp(/^[\w ]{1,64}$/);
 
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(bodyParser());
 
 var connectToSQL = function () {
     var obj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
