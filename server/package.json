@@ -2,8 +2,9 @@
   "name": "CS275-Project",
   "version": "0.0.1",
   "dependencies": {
-    "express": "*",
     "body-parser": "*",
+    "express": "*",
+    "express-json": "^1.0.0",
     "mysql": "*"
   }
 }

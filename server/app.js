@@ -13,7 +13,6 @@ var messageRegex = new RegExp(/^[\w ]{1,64}$/);
 
 app.use(express.json());
 app.use(express.urlencoded());
-app.use(express.multipart());
 
 var connectToSQL = function () {
     var obj = JSON.parse(fs.readFileSync('config.json', 'utf8'));
