@@ -71,7 +71,11 @@ app.get('/get/:zipcode', function (req, res) {
 });
 
 app.post('/api', function (req, res) {
-    var type = req.body.type;
+    var type = req.body.t;
+    if (type == null) {
+        console.log("Error :(");
+        return;
+    }
     switch (type.toLowerCase()) {
         case "get": {
             var count = parseInt(req.body.count, 10);
