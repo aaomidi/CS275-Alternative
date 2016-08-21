@@ -97,8 +97,8 @@ app.post('/api/put', function (req, res) {
                 errMessage: ""
             };
 
-            var zipcode = req.params.zipcode;
-            var str = req.params.message;
+            var zipcode = req.body.zipcode;
+            var str = req.body.message;
 
             var r = zipcodeRegex.test(zipcode);
             if (!r) {
